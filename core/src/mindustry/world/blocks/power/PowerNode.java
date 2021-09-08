@@ -29,8 +29,8 @@ public class PowerNode extends PowerBlock{
 
     public @Load("laser") TextureRegion laser;
     public @Load("laser-end") TextureRegion laserEnd;
-    public float laserRange = 6;
-    public int maxNodes = 3;
+    public float laserRange = 600;
+    public int maxNodes = 300;
     public Color laserColor1 = Color.white;
     public Color laserColor2 = Pal.powerLight;
 

@@ -8,7 +8,7 @@ public class PowerSource extends PowerNode{
 
     public PowerSource(String name){
         super(name);
-        maxNodes = 100;
+        maxNodes = 10000;
         outputsPower = true;
         consumesPower = false;
         //TODO maybe don't?

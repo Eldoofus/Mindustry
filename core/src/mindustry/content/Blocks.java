@@ -986,7 +986,7 @@ public class Blocks implements ContentList{
         itemBridge = new BufferedItemBridge("bridge-conveyor"){{
             requirements(Category.distribution, with(Items.lead, 6, Items.copper, 6));
             fadeIn = moveArrows = false;
-            range = 4;
+            range = 400;
             speed = 74f;
             arrowSpacing = 6f;
             bufferCapacity = 14;
@@ -994,7 +994,7 @@ public class Blocks implements ContentList{
 
         phaseConveyor = new ItemBridge("phase-conveyor"){{
             requirements(Category.distribution, with(Items.phaseFabric, 5, Items.silicon, 7, Items.lead, 10, Items.graphite, 10));
-            range = 12;
+            range = 1200;
             arrowPeriod = 0.9f;
             arrowTimeScl = 2.75f;
             hasPower = true;
@@ -1145,23 +1145,26 @@ public class Blocks implements ContentList{
 
         powerNode = new PowerNode("power-node"){{
             requirements(Category.power, with(Items.copper, 1, Items.lead, 3));
-            maxNodes = 10;
-            laserRange = 6;
+            maxNodes = 1000;
+            laserRange = 600;
+            insulated = true;
         }};
 
         powerNodeLarge = new PowerNode("power-node-large"){{
             requirements(Category.power, with(Items.titanium, 5, Items.lead, 10, Items.silicon, 3));
             size = 2;
-            maxNodes = 15;
-            laserRange = 9.5f;
+            maxNodes = 1500;
+            laserRange = 950f;
+            insulated = true;
         }};
 
         surgeTower = new PowerNode("surge-tower"){{
             requirements(Category.power, with(Items.titanium, 7, Items.lead, 10, Items.silicon, 15, Items.surgeAlloy, 15));
             size = 2;
-            maxNodes = 2;
-            laserRange = 40f;
+            maxNodes = 200;
+            laserRange = 4000f;
             schematicPriority = -15;
+            insulated = true;
         }};
 
         diode = new PowerDiode("diode"){{
@@ -2068,11 +2071,13 @@ public class Blocks implements ContentList{
             requirements(Category.power, BuildVisibility.sandboxOnly, with());
             powerProduction = 1000000f / 60f;
             alwaysUnlocked = true;
+            insulated = true;
         }};
 
         powerVoid = new PowerVoid("power-void"){{
             requirements(Category.power, BuildVisibility.sandboxOnly, with());
             alwaysUnlocked = true;
+            insulated = true;
         }};
 
         itemSource = new ItemSource("item-source"){{

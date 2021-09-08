@@ -51,7 +51,7 @@ public class Vars implements Loadable{
     /** Maximum extra padding around deployment schematics. */
     public static final int maxLoadoutSchematicPad = 5;
     /** Maximum schematic size.*/
-    public static final int maxSchematicSize = 32;
+    public static final int maxSchematicSize = 512;
     /** All schematic base64 starts with this string.*/
     public static final String schematicBaseStart ="bXNjaA";
     /** IO buffer size. */
@@ -82,7 +82,7 @@ public class Vars implements Loadable{
     /** maximum distance between mine and core that supports automatic transferring */
     public static final float mineTransferRange = 220f;
     /** max chat message length */
-    public static final int maxTextLength = 150;
+    public static final int maxTextLength = 1500;
     /** max player name length in bytes */
     public static final int maxNameLength = 40;
     /** displayed item size when ingame. */
@@ -92,7 +92,7 @@ public class Vars implements Loadable{
     /** range for building */
     public static final float buildingRange = 220f;
     /** range for moving items */
-    public static final float itemTransferRange = 220f;
+    public static final float itemTransferRange = 2200f;
     /** range for moving items for logic units */
     public static final float logicItemTransferRange = 45f;
     /** duration of time between turns in ticks */

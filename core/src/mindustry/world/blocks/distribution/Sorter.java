@@ -96,15 +96,15 @@ public class Sorter extends Block{
             if(((item == sortItem) != invert) == enabled){
                 //prevent 3-chains
                 if(isSame(source) && isSame(nearby(dir))){
-                    return null;
+                    //return null;
                 }
                 to = nearby(dir);
             }else{
                 Building a = nearby(Mathf.mod(dir - 1, 4));
                 Building b = nearby(Mathf.mod(dir + 1, 4));
-                boolean ac = a != null && !(a.block.instantTransfer && source.block.instantTransfer) &&
+                boolean ac = a != null /*&& !(a.block.instantTransfer && source.block.instantTransfer)*/ &&
                 a.acceptItem(this, item);
-                boolean bc = b != null && !(b.block.instantTransfer && source.block.instantTransfer) &&
+                boolean bc = b != null /*&& !(b.block.instantTransfer && source.block.instantTransfer)*/ &&
                 b.acceptItem(this, item);
 
                 if(ac && !bc){
