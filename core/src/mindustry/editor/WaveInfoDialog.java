@@ -1,7 +1,6 @@
 package mindustry.editor;
 
 import arc.*;
-import arc.func.*;
 import arc.graphics.*;
 import arc.math.*;
 import arc.scene.event.*;
@@ -19,6 +18,8 @@ import mindustry.io.*;
 import mindustry.type.*;
 import mindustry.ui.*;
 import mindustry.ui.dialogs.*;
+
+import java.util.*;
 
 import static mindustry.Vars.*;
 import static mindustry.game.SpawnGroup.*;
@@ -68,41 +69,46 @@ public class WaveInfoDialog extends BaseDialog{
 
         addCloseButton();
 
-        buttons.button("@waves.edit", () -> {
+        buttons.button("@waves.edit", Icon.pencil, () -> {
             BaseDialog dialog = new BaseDialog("@waves.edit");
             dialog.addCloseButton();
             dialog.setFillParent(false);
-            dialog.cont.defaults().size(210f, 64f);
-            dialog.cont.button("@waves.copy", () -> {
-                ui.showInfoFade("@waves.copied");
-                Core.app.setClipboardText(maps.writeWaves(groups));
-                dialog.hide();
-            }).disabled(b -> groups == null);
-            dialog.cont.row();
-            dialog.cont.button("@waves.load", () -> {
-                try{
-                    groups = maps.readWaves(Core.app.getClipboardText());
+            dialog.cont.table(Tex.button, t -> {
+                var style = Styles.cleart;
+                t.defaults().size(210f, 58f);
+
+                t.button("@waves.copy", Icon.copy, style, () -> {
+                    ui.showInfoFade("@waves.copied");
+                    Core.app.setClipboardText(maps.writeWaves(groups));
+                    dialog.hide();
+                }).disabled(b -> groups == null).marginLeft(12f).row();
+
+                t.button("@waves.load", Icon.download, style, () -> {
+                    try{
+                        groups = maps.readWaves(Core.app.getClipboardText());
+                        buildGroups();
+                    }catch(Exception e){
+                        e.printStackTrace();
+                        ui.showErrorMessage("@waves.invalid");
+                    }
+                    dialog.hide();
+                }).marginLeft(12f).disabled(b -> Core.app.getClipboardText() == null || Core.app.getClipboardText().isEmpty()).row();
+
+               t.button("@settings.reset", Icon.upload, style, () -> ui.showConfirm("@confirm", "@settings.clear.confirm", () -> {
+                    groups = JsonIO.copy(waves.get());
                     buildGroups();
-                }catch(Exception e){
-                    e.printStackTrace();
-                    ui.showErrorMessage("@waves.invalid");
-                }
-                dialog.hide();
-            }).disabled(b -> Core.app.getClipboardText() == null || Core.app.getClipboardText().isEmpty());
-            dialog.cont.row();
-            dialog.cont.button("@settings.reset", () -> ui.showConfirm("@confirm", "@settings.clear.confirm", () -> {
-                groups = JsonIO.copy(waves.get());
-                buildGroups();
-                dialog.hide();
-            }));
-            dialog.cont.row();
-            dialog.cont.button("@clear", () -> ui.showConfirm("@confirm", "@settings.clear.confirm", () -> {
-                groups.clear();
-                buildGroups();
-                dialog.hide();
-            }));
+                    dialog.hide();
+                })).marginLeft(12f).row();
+
+                t.button("@clear", Icon.cancel, style, () -> ui.showConfirm("@confirm", "@settings.clear.confirm", () -> {
+                    groups.clear();
+                    buildGroups();
+                    dialog.hide();
+                })).marginLeft(12f);
+            });
+
             dialog.show();
-        }).size(270f, 64f);
+        }).size(250f, 64f);
 
         buttons.defaults().width(60f);
 
@@ -205,6 +211,13 @@ public class WaveInfoDialog extends BaseDialog{
 
                         b.label(() -> (group.begin + 1) + "").color(Color.lightGray).minWidth(45f).labelAlign(Align.left).left();
 
+                        b.button(Icon.copySmall, Styles.emptyi, () -> {
+                            SpawnGroup newGroup = group.copy();
+                            expandedGroup = newGroup;
+                            groups.add(newGroup);
+                            buildGroups();
+                        }).pad(-6).size(46f);
+
                         b.button(group.effect != null && group.effect != StatusEffects.none ?
                             new TextureRegionDrawable(group.effect.uiIcon) :
                             Icon.logicSmall,
@@ -215,7 +228,7 @@ public class WaveInfoDialog extends BaseDialog{
                             groups.remove(group);
                             table.getCell(t).pad(0f);
                             t.remove();
-                            updateWaves();
+                            buildGroups();
                         }).pad(-6).size(46f).padRight(-12f);
                     }, () -> {
                         expandedGroup = expandedGroup == group ? null : group;
@@ -374,15 +387,15 @@ public class WaveInfoDialog extends BaseDialog{
     }
 
     enum Sort{
-        begin(g -> g.begin),
-        health(g -> g.type.health),
-        type(g -> g.type.id);
+        begin(Structs.comps(Structs.comparingFloat(g -> g.begin), Structs.comparingFloat(g -> g.type.id))),
+        health(Structs.comps(Structs.comparingFloat(g -> g.type.health), Structs.comparingFloat(g -> g.begin))),
+        type(Structs.comps(Structs.comparingFloat(g -> g.type.id), Structs.comparingFloat(g -> g.begin)));
 
         static final Sort[] all = values();
 
-        final Floatf<SpawnGroup> sort;
+        final Comparator<SpawnGroup> sort;
 
-        Sort(Floatf<SpawnGroup> sort){
+        Sort(Comparator<SpawnGroup> sort){
             this.sort = sort;
         }
     }
