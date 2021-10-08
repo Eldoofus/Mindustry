@@ -201,6 +201,7 @@ public class PowerNode extends PowerBlock{
     }
 
     protected void getPotentialLinks(Tile tile, Team team, Cons<Building> others){
+        /*
         Boolf<Building> valid = other -> other != null && other.tile() != tile && other.power != null &&
             (other.block.outputsPower || other.block.consumesPower || other.block instanceof PowerNode) &&
             overlaps(tile.x * tilesize + offset, tile.y * tilesize + offset, other.tile(), laserRange * tilesize) && other.team == team &&
@@ -248,6 +249,7 @@ public class PowerNode extends PowerBlock{
                 others.get(t);
             }
         });
+        */
     }
 
     //TODO code duplication w/ method above?
