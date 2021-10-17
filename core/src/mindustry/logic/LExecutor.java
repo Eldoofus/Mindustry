@@ -431,17 +431,16 @@ public class LExecutor{
                                     Call.pickedUnitPayload(unit, result);
                                 }
                             }else{ //buildings
-                                Building tile = world.buildWorld(unit.x, unit.y);
+                                Building build = world.buildWorld(unit.x, unit.y);
 
                                 //TODO copy pasted code
-                                if(tile != null && tile.team == unit.team){
-                                    if(tile.block.buildVisibility != BuildVisibility.hidden && tile.canPickup() && pay.canPickup(tile)){
-                                        Call.pickedBuildPayload(unit, tile, true);
-                                    }else{ //pick up block payload
-                                        Payload current = tile.getPayload();
-                                        if(current != null && pay.canPickupPayload(current)){
-                                            Call.pickedBuildPayload(unit, tile, false);
-                                        }
+                                if(build != null && build.team == unit.team){
+                                    Payload current = build.getPayload();
+                                    if(current != null && pay.canPickupPayload(current)){
+                                        Call.pickedBuildPayload(unit, build, false);
+                                        //pick up whole building directly
+                                    }else if(build.block.buildVisibility != BuildVisibility.hidden && build.canPickup() && pay.canPickup(build)){
+                                        Call.pickedBuildPayload(unit, build, true);
                                     }
                                 }
                             }
@@ -935,26 +934,30 @@ public class LExecutor{
             //this should avoid any garbage allocation
             Var v = exec.var(value);
             if(v.isobj && value != 0){
-                String strValue =
-                    v.objval == null ? "null" :
-                    v.objval instanceof String s ? s :
-                    v.objval == Blocks.stoneWall ? "solid" : //special alias
-                    v.objval instanceof MappableContent content ? content.name :
-                    v.objval instanceof Content ? "[content]" :
-                    v.objval instanceof Building build ? build.block.name :
-                    v.objval instanceof Unit unit ? unit.type.name :
-                    v.objval instanceof Enum<?> e ? e.name() :
-                    "[object]";
+                String strValue = toString(v.objval);
 
                 exec.textBuffer.append(strValue);
             }else{
                 //display integer version when possible
-                if(Math.abs(v.numval - (long)v.numval) < 0.000001){
+                if(Math.abs(v.numval - (long)v.numval) < 0.00001){
                     exec.textBuffer.append((long)v.numval);
                 }else{
                     exec.textBuffer.append(v.numval);
                 }
             }
+        }
+
+        public static String toString(Object obj){
+            return
+                obj == null ? "null" :
+                obj instanceof String s ? s :
+                obj == Blocks.stoneWall ? "solid" : //special alias
+                obj instanceof MappableContent content ? content.name :
+                obj instanceof Content ? "[content]" :
+                obj instanceof Building build ? build.block.name :
+                obj instanceof Unit unit ? unit.type.name :
+                obj instanceof Enum<?> e ? e.name() :
+                "[object]";
         }
     }
 
